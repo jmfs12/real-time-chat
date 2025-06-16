@@ -1,5 +1,6 @@
 package com.jmfs.chat_back.controllers;
 
+import com.jmfs.chat_back.dto.RegisterRequestDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +32,32 @@ public class AuthController {
             User user = this.userRepository.findByEmail(body.email())
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (passwordEncoder.matches(user.getPassword(), body.password())) {
+            if (passwordEncoder.matches(body.password(),user.getPassword() )) {
                   String token = tokenService.generateToken(user);
                   return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token) );
             } else {
                   return ResponseEntity.badRequest().build();
             }
                   
+      }
+
+      @PostMapping("/register")
+      public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {
+            // Implement registration logic here
+            // Validate input, check if user already exists, save user, etc.
+
+            if (userRepository.existsByEmail(body.email())) {
+                  return ResponseEntity.badRequest().build();
+            }
+
+            User newUser = new User();
+            newUser.setUsername(body.username());
+            newUser.setEmail(body.email());
+            newUser.setPassword(passwordEncoder.encode(body.password()));
+
+            userRepository.save(newUser);
+
+            String token = tokenService.generateToken(newUser);
+            return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
       }
 }
