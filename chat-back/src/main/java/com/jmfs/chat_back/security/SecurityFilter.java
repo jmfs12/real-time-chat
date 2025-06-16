@@ -35,6 +35,13 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+        String path = request.getRequestURI();
+
+        // Ignorar filtro para endpoints públicos
+        if (path.equals("/auth/login") || path.equals("/auth/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         log.info("[SECURITY] Processing request: {}", request.getRequestURI());
         var token = this.recoverToken(request);
         var login = tokenService.validateToken(token);
