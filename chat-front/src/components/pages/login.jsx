@@ -8,9 +8,41 @@ import { AiFillLock } from "react-icons/ai";
 import { BiSolidUser } from "react-icons/bi";
 import { useState } from 'react';
 import { AiOutlineMail } from "react-icons/ai";
+import UserService from '@/service/UserService';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
+  const router = useRouter();
+
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [username, setUsername] = useState('');
+
+
+  const handleLoginSubmit = async () => {
+    try {
+      const response = await UserService.login(email, password) 
+      localStorage.setItem('token', JSON.stringify(response.token));
+      setSuccess(true);
+    }catch (error) {
+      console.error("Login failed:", error);
+    }
+  }
+
+  const handleRegisterSubmit = async () => {
+    try {
+      const response = await UserService.register(email, username,  password);
+      localStorage.setItem('token', JSON.stringify(response.token));
+      setSuccess(true);
+      router.push('/'); // Redirect to home page after successful registration
+    }catch (error) {
+      console.error("Registration failed:", error);
+    }
+  }
+
 
   const handleRegister = () => {
       setIsLogin(false);
@@ -36,6 +68,8 @@ export default function Login() {
                 type="email"
                 placeholder="Email"
                 className="mt-1 bg-sky-50 rounded-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               ></Input>
             </div>
             <div className="flex items-center justify-between mt-2">
@@ -46,6 +80,8 @@ export default function Login() {
                 type="password"
                 placeholder="Password"
                 className="mt-1 bg-sky-50 rounded-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               ></Input>
             </div>
 
@@ -61,9 +97,17 @@ export default function Login() {
             </div>
           </div>
           <div className="absolute flex items-center justify-center mt-73">
-            <Button className="bg-sky-300 rounded-lg absolute w-60 h-10 z-0 hover:bg-sky-500 cursor-pointer font-extrabold text-base text-gray-800">
+            <Button className="bg-sky-300 rounded-lg absolute w-60 h-10 z-0 hover:bg-sky-500 cursor-pointer font-extrabold text-base text-gray-800"
+            onClick={handleLoginSubmit}>
               LOGIN
             </Button>
+          </div>
+          <div>
+            {success && (
+              <div className="text-green-500 mt-4">
+                Login successful! Redirecting...
+              </div>
+            )}
           </div>
         </>
       )}
@@ -82,6 +126,8 @@ export default function Login() {
                 type="email"
                 placeholder="Email"
                 className="mt-1 bg-sky-50 rounded-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               ></Input>
             </div>
 
@@ -93,6 +139,8 @@ export default function Login() {
                 type="username"
                 placeholder="Username"
                 className="mt-1 bg-sky-50 rounded-none"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               ></Input>
             </div>
 
@@ -104,6 +152,8 @@ export default function Login() {
                 type="password"
                 placeholder="Password"
                 className="mt-1 bg-sky-50 rounded-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               ></Input>
             </div>
 
@@ -119,7 +169,8 @@ export default function Login() {
             </div>
           </div>
           <div className="absolute flex items-center justify-center mt-85">
-            <Button className="bg-sky-300 rounded-lg absolute w-60 h-10 z-0 hover:bg-sky-500 cursor-pointer font-extrabold text-base text-gray-800">
+            <Button className="bg-sky-300 rounded-lg absolute w-60 h-10 z-0 hover:bg-sky-500 cursor-pointer font-extrabold text-base text-gray-800"
+            onClick={handleRegisterSubmit}>
               REGISTRAR
             </Button>
           </div>
