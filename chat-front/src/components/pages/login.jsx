@@ -11,6 +11,8 @@ import { AiOutlineMail } from "react-icons/ai";
 import UserService from '@/service/UserService';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
 
 export default function Login() {
   const router = useRouter();
@@ -105,7 +107,7 @@ export default function Login() {
           <div>
             {success && (
               <div className="text-green-500 mt-4">
-                Login successful! Redirecting...
+                {toast("Login successful! Redirecting...")}
               </div>
             )}
           </div>
@@ -174,6 +176,13 @@ export default function Login() {
               REGISTRAR
             </Button>
           </div>
+          <div>
+            {success && (
+              <div className="text-green-500 mt-4">
+                {toast("Registration successful! Redirecting...")}
+              </div>
+            )}
+          </div>  
         </>
       )}
     </div>
