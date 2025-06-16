@@ -1,63 +1,61 @@
 package com.jmfs.chat_back.controllers;
 
-import com.jmfs.chat_back.dto.RegisterRequestDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jmfs.chat_back.domain.user.User;
 import com.jmfs.chat_back.dto.LoginRequestDTO;
 import com.jmfs.chat_back.dto.ResponseDTO;
-import com.jmfs.chat_back.infra.security.TokenService;
-import com.jmfs.chat_back.repositories.UserRepository;
+import com.jmfs.chat_back.service.AuthService;
+import com.jmfs.chat_back.dto.RegisterRequestDTO;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
-      private final UserRepository userRepository;
-      private final TokenService tokenService;
-      private final PasswordEncoder passwordEncoder;
+      private final AuthService authService;
+
 
       @PostMapping("/login")
       public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
             // Implement login logic here
             // Validate user credentials, generate token, etc.
-
-            User user = this.userRepository.findByEmail(body.email())
-                        .orElseThrow(() -> new RuntimeException("User not found"));
-
-            if (passwordEncoder.matches(body.password(),user.getPassword() )) {
-                  String token = tokenService.generateToken(user);
-                  return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token) );
-            } else {
-                  return ResponseEntity.badRequest().build();
+            log.info("[AUTH] Login attempt for user: {}", body.email());
+            if (body.email() == null || body.password() == null) {
+                  log.warn("[AUTH] Login failed due to missing credentials for user: {}", body.email());
+                  return ResponseEntity.badRequest().build(); // Bad Request
             }
-                  
+            ResponseDTO response = authService.login(body);
+            if (response == null) {
+                  log.warn("[AUTH] Login failed for user: {}", body.email());
+                  return ResponseEntity.status(401).build(); // Unauthorized
+            }
+            log.info("[AUTH] User {} logged in successfully", response.name());
+            return ResponseEntity.ok(response);
+            
       }
 
       @PostMapping("/register")
       public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {
             // Implement registration logic here
             // Validate input, check if user already exists, save user, etc.
-
-            if (userRepository.existsByEmail(body.email())) {
-                  return ResponseEntity.badRequest().build();
+            log.info("[AUTH] Registration attempt for user: {}", body.email());
+            if (body.email() == null || body.username() == null || body.password() == null) {
+                  log.warn("[AUTH] Registration failed due to missing credentials for user: {}", body.email());
+                  return ResponseEntity.badRequest().build(); // Bad Request
             }
-
-            User newUser = new User();
-            newUser.setUsername(body.username());
-            newUser.setEmail(body.email());
-            newUser.setPassword(passwordEncoder.encode(body.password()));
-
-            userRepository.save(newUser);
-
-            String token = tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
+            ResponseDTO response = authService.register(body);
+            if (response == null) {
+                  log.warn("[AUTH] Registration failed for user: {}", body.email());
+                  return ResponseEntity.status(400).build(); // Bad Request
+            }
+            log.info("[AUTH] User {} registered successfully", response.name());
+            return ResponseEntity.ok(response);
       }
 }

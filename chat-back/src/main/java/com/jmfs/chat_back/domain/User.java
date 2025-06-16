@@ -1,4 +1,4 @@
-package com.jmfs.chat_back.domain.user;
+package com.jmfs.chat_back.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

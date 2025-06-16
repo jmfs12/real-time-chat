@@ -2,7 +2,7 @@ package com.jmfs.chat_back.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.jmfs.chat_back.domain.user.User;
+import com.jmfs.chat_back.domain.User;
 
 import java.util.Optional;
 
