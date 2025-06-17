@@ -16,7 +16,7 @@ export default class UserService {
     }
   }
 
-  static async register(username : string, email : string, password : string) {
+  static async register(email : string, username : string,  password : string) {
     try {
       const response = await axiosInstance.post("/auth/register", {
         email,
