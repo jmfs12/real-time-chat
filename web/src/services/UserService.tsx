@@ -11,7 +11,7 @@ export default class UserService {
         password,
       });
       return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
       throw error.response ? error.response.data : error.message;
     }
   }
