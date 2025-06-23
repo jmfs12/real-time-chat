@@ -5,7 +5,7 @@ import { BiSolidUser } from "react-icons/bi";
 import { useState, type ChangeEvent } from "react";
 import UserService from "../services/UserService";
 import { toast } from "sonner";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   token: string;
@@ -15,11 +15,14 @@ export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const navigate = useNavigate();
+
   const handleLoginSubmit = async (): Promise<void> => {
     try {
       const response: LoginResponse = await UserService.login(email, password);
-      localStorage.setItem("token", JSON.stringify(response.token));
+      localStorage.setItem("token", response.token);
       toast.success("Login successful! You are now logged in.");
+      navigate("/chat");
     } catch (error) {
       toast.error("Login failed. Please try again.");
     }
@@ -32,7 +35,7 @@ export default function Login() {
     setPassword(e.target.value);
 
   return (
-    <div className="bg-gray-100 h-screen w-screen flex items-center justify-center font-mono">
+    <div className="bg-gray-100 h-screen w-screen flex items-center justify-center font-poppins">
       <div className="bg-sky-300 rounded-full text-8xl p-5 absolute mt-[-300px] shadow-sm shadow-sky-600 z-20">
         <AiOutlineUser />
       </div>
