@@ -1,5 +1,7 @@
 package com.jmfs.chat_back.domain;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -25,4 +28,12 @@ public class User {
 
     private String email;
 
+    
+    @OneToMany(mappedBy = "user_1")
+    private List<Chat> chatsAsUser1;
+
+    @OneToMany(mappedBy = "user_2")
+    private List<Chat> chatsAsUser2;
+
+ 
 }

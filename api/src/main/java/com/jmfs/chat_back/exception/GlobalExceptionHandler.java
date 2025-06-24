@@ -14,5 +14,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(ChatNotFoundException.class)
+    public ResponseEntity<?> handleChatNotFound(ChatNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MessagesNotFoundedException.class)
+    public ResponseEntity<?> handleMessagesNotFound(MessagesNotFoundedException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
 }
 

@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
       private final AuthService authService;
 
-
       @PostMapping("/login")
       public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
             // Implement login logic here
