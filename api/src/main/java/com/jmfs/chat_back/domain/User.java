@@ -28,12 +28,10 @@ public class User {
 
     private String email;
 
-    
     @OneToMany(mappedBy = "user_1")
     private List<Chat> chatsAsUser1;
 
     @OneToMany(mappedBy = "user_2")
     private List<Chat> chatsAsUser2;
 
- 
 }
