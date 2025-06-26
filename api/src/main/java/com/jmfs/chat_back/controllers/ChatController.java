@@ -1,14 +1,18 @@
 package com.jmfs.chat_back.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jmfs.chat_back.dto.ChatRequestDTO;
+import com.jmfs.chat_back.dto.MessageDTO;
 import com.jmfs.chat_back.service.ChatService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,13 +31,13 @@ public class ChatController {
        * 
        */
       @PostMapping("/enter-chat")
-      public ResponseEntity<Long> getChat(ChatRequestDTO chatRequestDTO) {
+      public ResponseEntity<Long> getChat(@RequestBody ChatRequestDTO chatRequestDTO) {
             Long chatId = chatService.getChat(chatRequestDTO);
             return ResponseEntity.ok(chatId); // OK
       }
 
       @PutMapping("/send-message")
-      public ResponseEntity<Boolean> sendMessage(ChatRequestDTO chatRequestDTO) {
+      public ResponseEntity<Boolean> sendMessage(@RequestBody ChatRequestDTO chatRequestDTO) {
             if (chatService.sendMessage(chatRequestDTO)) {
                   return ResponseEntity.ok(true); // OK
             } else {
@@ -41,9 +45,19 @@ public class ChatController {
             }
       }
       
-      @GetMapping("/messages/{chatId}/{userId}")
-      public ResponseEntity<?> getMessagesFromUser(@PathVariable Long chatId, @PathVariable Long userId) {
-            return null;
+      /*
+       * Método GET para obter mensagens de um chat específico.
+       * Recebe o ID do chat como parâmetro.
+       * Retorna uma lista de mensagens do chat.
+       */
+      @GetMapping("/messages/{chatId}")
+      public ResponseEntity<List<MessageDTO>> getMessagesFromUser(@PathVariable Long chatId) {
+            List<MessageDTO> messages = chatService.getMessages(chatId);
+            if (messages.isEmpty()) {
+                  return ResponseEntity.noContent().build(); // No Content
+            } else {
+                  return ResponseEntity.ok(messages); // OK
+            }
       }
 
 }

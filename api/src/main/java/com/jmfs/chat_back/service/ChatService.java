@@ -2,15 +2,14 @@ package com.jmfs.chat_back.service;
 
 import java.util.List;
 
-import com.jmfs.chat_back.domain.Message;
 import com.jmfs.chat_back.dto.ChatRequestDTO;
-import com.jmfs.chat_back.dto.MessageRequestDTO;
+import com.jmfs.chat_back.dto.MessageDTO;
 
 public interface ChatService {
       public Boolean sendMessage(ChatRequestDTO chatRequestDTO);
 
       public Long getChat(ChatRequestDTO chatRequestDTO);
 
-      public List<Message> getMessagesFromUser(MessageRequestDTO messageRequestDTO);
+      public List<MessageDTO> getMessages(Long chatId);
 
 }
