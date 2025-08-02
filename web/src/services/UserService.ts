@@ -28,4 +28,43 @@ export default class UserService {
       throw error.response ? error.response.data : error.message;
     }
   }
+
+  static async getAllUsers(token: string){
+    try {
+      const response = await axiosInstance.get("/api/users/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response ? error.response.data : error.message;
+    }
+  }
+
+  static async getUsername(token: string) {
+    try {
+      const response = await axiosInstance.get(`/api/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response ? error.response.data : error.message;
+    }
+  }
+
+  static async getAllUserChats(token: string) {
+    try{
+      const response = await axiosInstance.get("/api/users/chats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response ? error.response.data : error.message;
+    }
+  }
 }

@@ -1,11 +1,5 @@
 import axiosInstance from '@/utils/axiosInstance';
-
-export interface ChatRequestDTO {
-    message: string;
-    sender: number;
-    receiver: number;
-    timestamp: string;
-}
+import { type ChatRequestDTO } from '@/types';
 
 class ChatService {
     static async enterChat(chatRequestDTO: ChatRequestDTO) {

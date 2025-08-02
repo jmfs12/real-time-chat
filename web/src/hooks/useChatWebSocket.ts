@@ -1,7 +1,7 @@
 import {Client} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {useEffect, useRef, useState} from 'react';
-import {type ChatRequestDTO} from '@/services/ChatService';
+import {type ChatRequestDTO} from '@/types';
 
 interface MessageDTO{
     content: string;
