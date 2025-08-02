@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.jmfs.chat_back.domain.Chat;
@@ -21,11 +22,13 @@ import com.jmfs.chat_back.service.ChatService;
 public class ChatServiceImpl implements ChatService {
       private final UserRepository userRepository;
       private final ChatRepository chatRepository;
+      private final SimpMessagingTemplate messagingTemplate;
 
       @Autowired
-      public ChatServiceImpl(UserRepository userRepository, ChatRepository chatRepository) {
+      public ChatServiceImpl(UserRepository userRepository, ChatRepository chatRepository, SimpMessagingTemplate messagingTemplate) {
             this.userRepository = userRepository;
             this.chatRepository = chatRepository;
+            this.messagingTemplate = messagingTemplate;
       }
 
       /* 
@@ -36,17 +39,17 @@ public class ChatServiceImpl implements ChatService {
       @Override 
       public Long getChat(ChatRequestDTO chatRequestDTO) {
             return chatRepository.findChatBetweenUsers(chatRequestDTO.sender(), chatRequestDTO.receiver())
-                .map(Chat::getId)
-                .orElseGet(() -> {
-                    Chat newChat = new Chat();
-                    newChat.setUser_1(userRepository.findById(chatRequestDTO.sender())
+            .map(Chat::getId)
+            .orElseGet(() -> {
+                  Chat newChat = new Chat();
+                  newChat.setUser_1(userRepository.findById(chatRequestDTO.sender())
                         .orElseThrow(() -> new ChatNotFoundException("Sender not found")));
                   newChat.setUser_2(userRepository.findById(chatRequestDTO.receiver())
                         .orElseThrow(() -> new ChatNotFoundException("Sender not found")));
-                    newChat.setMessages(new ArrayList<>());
-                    return chatRepository.save(newChat).getId();
-                });
-        }
+                  newChat.setMessages(new ArrayList<>());
+                  return chatRepository.save(newChat).getId();
+            });
+      }
       
         /*
          * Metodo PUT para enviar uma mensagem
@@ -54,7 +57,7 @@ public class ChatServiceImpl implements ChatService {
          * e deve salvar a mensagem no chat correspondente
          */
       @Override 
-      public Boolean sendMessage(ChatRequestDTO chatRequestDTO) {
+      public MessageDTO sendMessage(ChatRequestDTO chatRequestDTO) {
 
             Chat chat = chatRepository.findChatBetweenUsers(chatRequestDTO.sender(), chatRequestDTO.receiver())
                         .orElseThrow(() -> new ChatNotFoundException("Chat not found"));
@@ -71,8 +74,16 @@ public class ChatServiceImpl implements ChatService {
             messages.add(message);
 
             chat.setMessages(toMessageInfo(messages));
-            return chatRepository.save(chat) != null;
+            boolean saved = chatRepository.save(chat) != null;
 
+            if (saved){
+                  userRepository.findById(chatRequestDTO.receiver())
+                        .orElseThrow(() -> new ChatNotFoundException("Receiver not found"));
+                  messagingTemplate.convertAndSendToUser(chatRequestDTO.receiver().toString(), "/queue/messages/", message);
+                  return message;
+            } else {
+                  return null;
+            }
       }
       
       /*

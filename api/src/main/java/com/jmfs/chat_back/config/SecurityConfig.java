@@ -1,4 +1,4 @@
-package com.jmfs.chat_back.security;
+package com.jmfs.chat_back.config;
 
 import java.util.List;
 
@@ -19,6 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.jmfs.chat_back.security.CustomUserDetailsService;
+import com.jmfs.chat_back.security.SecurityFilter;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -30,8 +33,6 @@ public class SecurityConfig {
 
       @Autowired
       CustomUserDetailsService customUserDetailsService;
-      @Autowired
-      private CorsConfigurationSource corsConfigurationSource;
 
       @Bean
       public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

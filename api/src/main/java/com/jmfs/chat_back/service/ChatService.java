@@ -6,7 +6,7 @@ import com.jmfs.chat_back.dto.ChatRequestDTO;
 import com.jmfs.chat_back.dto.MessageDTO;
 
 public interface ChatService {
-      public Boolean sendMessage(ChatRequestDTO chatRequestDTO);
+      public MessageDTO sendMessage(ChatRequestDTO chatRequestDTO);
 
       public Long getChat(ChatRequestDTO chatRequestDTO);
 

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,27 +29,18 @@ public class ChatController {
        * Retorna o ID do chat se encontrado, ou cria um novo chat se não existir
        * 
        */
-      @PostMapping("/enter-chat")
+      @PostMapping("/enter")
       public ResponseEntity<Long> getChat(@RequestBody ChatRequestDTO chatRequestDTO) {
             Long chatId = chatService.getChat(chatRequestDTO);
             return ResponseEntity.ok(chatId); // OK
       }
 
-      @PutMapping("/send-message")
-      public ResponseEntity<Boolean> sendMessage(@RequestBody ChatRequestDTO chatRequestDTO) {
-            if (chatService.sendMessage(chatRequestDTO)) {
-                  return ResponseEntity.ok(true); // OK
-            } else {
-                  return ResponseEntity.badRequest().build(); // Bad Request
-            }
-      }
-      
       /*
        * Método GET para obter mensagens de um chat específico.
        * Recebe o ID do chat como parâmetro.
        * Retorna uma lista de mensagens do chat.
        */
-      @GetMapping("/messages/{chatId}")
+      @GetMapping("/history/{chatId}")
       public ResponseEntity<List<MessageDTO>> getMessagesFromUser(@PathVariable Long chatId) {
             List<MessageDTO> messages = chatService.getMessages(chatId);
             if (messages.isEmpty()) {
