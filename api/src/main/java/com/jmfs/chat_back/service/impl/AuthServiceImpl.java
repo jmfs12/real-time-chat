@@ -67,4 +67,17 @@ public class AuthServiceImpl implements AuthService {
             log.info("[REGISTER] User {} registered successfully", newUser.getEmail());
             return new ResponseDTO(newUser.getUsername(), token);
       }
+
+      @Override
+      public Boolean validateToken(String authString) {
+            log.info("[VALIDATE_TOKEN] Validating token: {}", authString);
+            String token = authString.replace("Bearer ", "").trim();
+            if (tokenService.validateToken(token) != null){
+                  log.info("[VALIDATE_TOKEN] Token is valid");
+                  return true;
+            } else {
+                  log.warn("[VALIDATE_TOKEN] Token is invalid");
+                  return false;
+            }
+      }
 }

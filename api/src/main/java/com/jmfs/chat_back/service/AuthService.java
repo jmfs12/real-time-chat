@@ -7,4 +7,5 @@ import com.jmfs.chat_back.dto.ResponseDTO;
 public interface AuthService {
     ResponseDTO login(LoginRequestDTO body);
     ResponseDTO register(RegisterRequestDTO body);
+    Boolean validateToken(String token);
 }

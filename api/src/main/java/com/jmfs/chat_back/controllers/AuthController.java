@@ -1,8 +1,10 @@
 package com.jmfs.chat_back.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,5 +58,16 @@ public class AuthController {
             }
             log.info("[AUTH] User {} registered successfully", response.name());
             return ResponseEntity.ok(response);
+      }
+
+      @GetMapping("/validate-token")
+      public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
+            if (authService.validateToken(token)) {
+                  log.info("[AUTH] Token validation successful for token: {}", token);
+                  return ResponseEntity.ok(true);
+            } else {
+                  log.warn("[AUTH] Token validation failed for token: {}", token);
+                  return ResponseEntity.status(401).body(false); // Unauthorized
+            }
       }
 }
