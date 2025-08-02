@@ -40,6 +40,7 @@ public class ChatController {
        * Recebe o ID do chat como parâmetro.
        * Retorna uma lista de mensagens do chat.
        */
+      
       @GetMapping("/history/{chatId}")
       public ResponseEntity<List<MessageDTO>> getMessagesFromUser(@PathVariable Long chatId) {
             List<MessageDTO> messages = chatService.getMessages(chatId);

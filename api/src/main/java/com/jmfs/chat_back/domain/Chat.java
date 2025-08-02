@@ -1,6 +1,7 @@
 package com.jmfs.chat_back.domain;
 
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -36,5 +37,19 @@ public class Chat {
 
       @ElementCollection
       private List<MessageInfo> messages;
+
+      @Override
+            public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Chat chat = (Chat) o;
+            return Objects.equals(id, chat.id);
+      }
+
+      @Override
+      public int hashCode() {
+            return Objects.hash(id);
+      }
+
 
 }

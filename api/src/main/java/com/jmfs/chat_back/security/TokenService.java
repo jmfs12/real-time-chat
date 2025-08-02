@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import com.jmfs.chat_back.domain.User;
 import com.jmfs.chat_back.exception.TokenCreationException;
 
@@ -29,6 +31,7 @@ public class TokenService {
 
             String token = JWT.create()
                     .withIssuer("chat-back-api")
+                    .withClaim("id", user.getId()) 
                     .withSubject(user.getEmail())
                     .withExpiresAt(getExpirationTime())
                     .sign(algorithm);
@@ -61,6 +64,15 @@ public class TokenService {
         return LocalDateTime.now()
                 .plusHours(2)
                 .toInstant(ZoneOffset.of("-3"));
+    }
+
+    public Long extractUserId(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT jwt = verifier.verify(token);
+
+        // Supondo que o ID foi incluído como claim "id"
+        return jwt.getClaim("id").asLong();
     }
 
 }

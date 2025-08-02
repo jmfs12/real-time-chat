@@ -3,6 +3,7 @@ package com.jmfs.chat_back.config;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,9 @@ public class SecurityConfig {
 
       @Autowired
       CustomUserDetailsService customUserDetailsService;
+
+      @Value("${api.security.token.secret}")
+      private String SECRET_KEY;
 
       @Bean
       public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -78,6 +82,5 @@ public class SecurityConfig {
             log.info("[SECURITY] Configuring authentication manager");
             return authenticationConfiguration.getAuthenticationManager();
       }
-
 
 }
