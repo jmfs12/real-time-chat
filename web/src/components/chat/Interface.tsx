@@ -1,18 +1,20 @@
 import { Textarea } from "@/components/ui/textarea"
+import type { Chat, User } from "@/types";
 
 
 export default function Interface({
-      name,
-
+      chat,
+      users,
 }: {
-      name?: string; 
+      chat?: Chat | undefined;
+      users: User[];
 }){
 
-      return name ? (
+      return chat ? (
         <div className="bg-white h-150 w-250 shadow-md rounded-lg mx-5">
           <div className="h-15 w-full p-5">
             <div className="flex items-center justify-between mx-7">
-              <p className="text-sky-800">{name}</p>
+              <p className="text-sky-800">{users.find(user => user.id === chat.user2Id)?.username}</p>
             </div>
           </div>
           <div className="w-full h-0.5 bg-gray-100 mx-7" /> {/* Divider line */}

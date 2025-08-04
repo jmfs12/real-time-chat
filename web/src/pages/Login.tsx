@@ -62,6 +62,11 @@ export default function Login() {
             className="mt-1 bg-sky-50 rounded-none border-none"
             value={password}
             onChange={onPasswordChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleLoginSubmit();
+              }
+            }}
           />
         </div>
 

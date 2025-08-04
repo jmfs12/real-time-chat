@@ -13,8 +13,8 @@ export interface User{
 
 export interface Chat{
     id: number;
-    user1: number;
-    user2: number;
+    user1Id: number;
+    user2Id: number;
     messages: Message[];
 }
 

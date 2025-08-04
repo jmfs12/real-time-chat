@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Chat, User } from '@/types';
 import UserService from '@/services/UserService';
 
 export default function useChatManagement() {
-    const [selectedChat, setSelectedChat] = useState<Number | null>(null);
+    const [selectedChat, setSelectedChat] = useState<number | null>(null);
     const [chats, setChats] = useState<Chat[]>([]);
     const [users, setUsers] = useState<User[]>([]);
 
     const fetchChats = async (token: string) => {
         try {
             const chats = await UserService.getAllUserChats(token);
-            const fetchedChats = chats.map((chat: Chat) => ({id: chat.id, user1: chat.user1, user2: chat.user2, messages: chat.messages}));
+            const fetchedChats = chats.map((chat: Chat) => ({id: chat.id, user1Id: chat.user1Id, user2Id: chat.user2Id, messages: chat.messages}));
             setChats(fetchedChats);
         } catch (error) {
             console.error('Error fetching chats:', error);
@@ -27,8 +27,15 @@ export default function useChatManagement() {
         }
     };
 
-    fetchChats(localStorage.getItem('token') || '');
-    fetchUsers(localStorage.getItem('token') || '');
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error('No token found in localStorage');
+            return;
+        }
+        fetchChats(token);
+        fetchUsers(token);
+    }, [])
 
     return {
         chats,

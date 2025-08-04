@@ -16,6 +16,7 @@ import com.jmfs.chat_back.exception.MessagesNotFoundedException;
 import com.jmfs.chat_back.repositories.ChatRepository;
 
 import com.jmfs.chat_back.repositories.UserRepository;
+import com.jmfs.chat_back.security.TokenService;
 import com.jmfs.chat_back.service.ChatService;
 
 @Service
@@ -23,12 +24,14 @@ public class ChatServiceImpl implements ChatService {
       private final UserRepository userRepository;
       private final ChatRepository chatRepository;
       private final SimpMessagingTemplate messagingTemplate;
+      private final TokenService tokenService;
 
       @Autowired
-      public ChatServiceImpl(UserRepository userRepository, ChatRepository chatRepository, SimpMessagingTemplate messagingTemplate) {
+      public ChatServiceImpl(UserRepository userRepository, ChatRepository chatRepository, SimpMessagingTemplate messagingTemplate, TokenService tokenService) {
             this.userRepository = userRepository;
             this.chatRepository = chatRepository;
             this.messagingTemplate = messagingTemplate;
+            this.tokenService = tokenService;
       }
 
       /* 
@@ -36,16 +39,19 @@ public class ChatServiceImpl implements ChatService {
        * vai ser chamado sempre que um usuário clicar em algum chat
        * e deve salvar o id retornado no localstorage do front-end
       */
+
       @Override 
-      public Long getChat(ChatRequestDTO chatRequestDTO) {
-            return chatRepository.findChatBetweenUsers(chatRequestDTO.sender(), chatRequestDTO.receiver())
+      public Long getChat(String token, Long userId) {
+
+            Long userIdFromToken = tokenService.extractUserId(token);
+            return chatRepository.findChatBetweenUsers(userIdFromToken, userId)
             .map(Chat::getId)
             .orElseGet(() -> {
                   Chat newChat = new Chat();
-                  newChat.setUser_1(userRepository.findById(chatRequestDTO.sender())
+                  newChat.setUser_1(userRepository.findById(userIdFromToken)
                         .orElseThrow(() -> new ChatNotFoundException("Sender not found")));
-                  newChat.setUser_2(userRepository.findById(chatRequestDTO.receiver())
-                        .orElseThrow(() -> new ChatNotFoundException("Sender not found")));
+                  newChat.setUser_2(userRepository.findById(userId)
+                        .orElseThrow(() -> new ChatNotFoundException("Receiver not found")));
                   newChat.setMessages(new ArrayList<>());
                   return chatRepository.save(newChat).getId();
             });

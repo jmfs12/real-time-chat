@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jmfs.chat_back.dto.ChatRequestDTO;
 import com.jmfs.chat_back.dto.MessageDTO;
 import com.jmfs.chat_back.service.ChatService;
+import com.jmfs.chat_back.dto.UserIdDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +31,8 @@ public class ChatController {
        * 
        */
       @PostMapping("/enter")
-      public ResponseEntity<Long> getChat(@RequestBody ChatRequestDTO chatRequestDTO) {
-            Long chatId = chatService.getChat(chatRequestDTO);
+      public ResponseEntity<Long> getChat(@RequestHeader("Authorization") String token, @RequestBody UserIdDTO userIdDTO) {
+            Long chatId = chatService.getChat(token.substring(7), userIdDTO.getUserId());
             return ResponseEntity.ok(chatId); // OK
       }
 

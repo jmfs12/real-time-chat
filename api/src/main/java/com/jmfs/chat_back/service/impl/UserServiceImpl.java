@@ -2,11 +2,9 @@ package com.jmfs.chat_back.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
-import com.jmfs.chat_back.domain.Chat;
 import com.jmfs.chat_back.domain.User;
 import com.jmfs.chat_back.dto.ChatDTO;
 import com.jmfs.chat_back.dto.UserDTO;
@@ -55,18 +53,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return Stream.<Chat>concat(
-                    user.getChatsAsUser1().stream(),
-                    user.getChatsAsUser2().stream()
-                )
-                .distinct()
-                .map(chat -> new ChatDTO(
-                        chat.getId(),
-                        chat.getUser_1().getId(),
-                        chat.getUser_2().getId()
-                ))
-                .collect(Collectors.toList());
-
-        
+        return user.getChatsAsUser1()
+            .stream()
+            .map(chat -> new ChatDTO(chat.getId(), chat.getUser_1().getId(), chat.getUser_2().getId()))
+            .collect(Collectors.toList());
     }
 }

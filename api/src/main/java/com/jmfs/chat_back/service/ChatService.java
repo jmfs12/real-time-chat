@@ -8,7 +8,7 @@ import com.jmfs.chat_back.dto.MessageDTO;
 public interface ChatService {
       public MessageDTO sendMessage(ChatRequestDTO chatRequestDTO);
 
-      public Long getChat(ChatRequestDTO chatRequestDTO);
+      public Long getChat(String token, Long userId);
 
       public List<MessageDTO> getMessages(Long chatId);
 
